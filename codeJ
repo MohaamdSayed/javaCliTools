@@ -1,0 +1,52 @@
+#!/bin/bash
+
+# check if the name is provided
+
+if [ -z "$1" ]; then
+	echo "This Tool is Created by Mohamed Sayed to Create Java Classes"
+	echo "Usage codeJ <ClassName>"
+	exit 1
+fi
+
+# Get the Class Name from argument
+CLASS_NAME="$1"
+
+# Define file path
+FILE_PATH="$CLASS_NAME/$CLASS_NAME.java"
+
+mkdir -p "$CLASS_NAME"
+
+
+# Create the java file with default content
+
+cat > "$FILE_PATH" <<EOF
+import java.util.Scanner;
+
+public class $CLASS_NAME {
+	public static void main(String [] args) {
+		
+		Scanner scanner = new Scanner(System.in);
+		System.out.println("Hello world!");
+	}
+
+}
+EOF
+
+# Notify the user
+
+echo "Java File '$FILE_PATH' has been created"
+
+
+# Ask the user if they want to open it in nano
+
+read -p "Do you want to open it in nano ? (Y/N): " choice
+
+# Convert to lowercase 
+choice=$(echo "$choice" | tr '[:upper:]' '[:lower:]')
+
+# Open the file in nano  
+if [ "$choice" == "y" ]; then
+	nano "$FILE_PATH"
+else
+	echo "Have Great Day!"
+fi

@@ -1,0 +1,53 @@
+#!/bin/bash
+
+# Check if folder name is provided
+if [ -z "$1" ]; then
+	echo "Usage runJ <FolderName>"
+	exit 1
+fi
+
+# Get the folder name
+
+FOLDER_NAME="$1"
+
+# Find all java files in the specified folder
+
+JAVA_FILES=($(find "$FOLDER_NAME" -maxdepth 1 -name "*.java"))
+
+
+# Check if there are no Java Files 
+
+if [ ${JAVA_FILES[@]} -eq 0 ]; then
+	echo "No Java files found in '$FOLDER_NAME'.'"
+	exit 1
+fi
+
+# if only one java file is found , use it 
+
+if [ ${JAVA_FILES[@]} -eq 1 ]; then
+	JAVA_FILE="${JAVA_FILES[0]}"
+else 
+	echo "Multiple java files found. Please select one:"
+	select JAVA_FILE in "${JAVA_FILES[@]}"; do
+		if [ -n "$JAVA_FILE" ]; then
+			break
+		fi
+		echo "Invalid Choice. Try again."
+	done
+fi
+
+# Extract the class name from the java file 
+
+CLASS_NAME=$(basename "$JAVA_FILE" .java)
+
+# Compile the java file
+javac "$JAVA_FILE"
+if [ $? -ne 0 ]; then
+	echo "Compilation failed."
+	exit 1
+fi
+
+# Run the compiled Java Class
+
+echo "Running $CLASS_NAME..."
+java -cp "$FOLDER_NAME" "$CLASS_NAME"
